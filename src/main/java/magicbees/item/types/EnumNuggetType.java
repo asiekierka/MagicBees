@@ -31,7 +31,7 @@ public enum EnumNuggetType implements IEnumItem {
 
 	@Override
 	public ResourceLocation getTextureLocation() {
-		return new MagicBeesResourceLocation("items/part"+toString().toLowerCase());
+		return MagicBeesResourceLocation.create("items/part"+toString().toLowerCase());
 	}
 
 }

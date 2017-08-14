@@ -117,7 +117,7 @@ public class BlockEffectJar extends AbstractBlock implements ITileEntityProvider
 	@Override
 	@SideOnly(Side.CLIENT)
 	public VariantList getVariantsFor(IBlockState state) {
-		return new VariantList(Lists.newArrayList(new Variant(new MagicBeesResourceLocation("models/effectjar.obj"), ModelRotation.X0_Y0, false, 0)));
+		return new VariantList(Lists.newArrayList(new Variant(MagicBeesResourceLocation.create("models/effectjar.obj"), ModelRotation.X0_Y0, false, 0)));
 	}
 
 }

@@ -34,7 +34,7 @@ import java.util.List;
 public class ItemMoonDial extends AbstractTexturedItem {
 
     public ItemMoonDial() {
-        super(new MagicBeesResourceLocation("moondial"));
+        super(MagicBeesResourceLocation.create("moondial"));
         setCreativeTab(MagicBees.creativeTab);
     }
 
@@ -45,6 +45,8 @@ public class ItemMoonDial extends AbstractTexturedItem {
     @Override
     public void getSubItemsC(@Nonnull Item item, List<ItemStack> subItems, CreativeTabs creativeTab) {
         super.getSubItemsC(item, subItems, creativeTab);
+        if (!MagicBees.beesInitialized) return;
+
         for (EnumBeeType type : EnumBeeType.values()) {
             for (EnumBeeSpecies species : EnumBeeSpecies.values()) {
                 IBee bee = species.getIndividual();
@@ -87,16 +89,18 @@ public class ItemMoonDial extends AbstractTexturedItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        if (Config.moonDialShowsPhaseInText && ItemStackHelper.isStackValid(player.getHeldItemMainhand()) && player.getHeldItemMainhand().getItem() == this){
-            tooltip.add("\u00A77" + MoonPhase.getMoonPhase(player.getEntityWorld()).getLocalizedName());
+    public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
+        super.addInformationC(stack, world, tooltip, advanced);
+        EntityPlayer player = MagicBees.proxy.getClientPlayer();
+        if (player != null && Config.moonDialShowsPhaseInText && ItemStackHelper.isStackValid(player.getHeldItemMainhand()) && player.getHeldItemMainhand().getItem() == this){
+            tooltip.add("\u00A77" + MoonPhase.getMoonPhase(world).getLocalizedName());
         }
     }
 
     static {
         textureLocs = new ResourceLocation[MoonPhase.values().length];
         for (int i = 0; i < textureLocs.length; i++) {
-            textureLocs[i] = new MagicBeesResourceLocation("items/moondial."+i);
+            textureLocs[i] = MagicBeesResourceLocation.create("items/moondial."+i);
         }
     }
 

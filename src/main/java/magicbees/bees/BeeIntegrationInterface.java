@@ -26,11 +26,11 @@ import static elec332.core.compat.forestry.ForestryAlleles.*;
  */
 public final class BeeIntegrationInterface {
 
-	public static final ResourceLocation bot_flowers_name = new MagicBeesResourceLocation("flowersBotania");
-	public static final ResourceLocation bot_dreaming_name = new MagicBeesResourceLocation("effectDreaming");
-	public static final ResourceLocation te_spawnBlizz_name = new MagicBeesResourceLocation("spawnBlizz");
-	public static final ResourceLocation te_spawnBlitz_name = new MagicBeesResourceLocation("spawnBlitz");
-	public static final ResourceLocation te_spawnBasalz_name = new MagicBeesResourceLocation("spawnBasalz");
+	public static final ResourceLocation bot_flowers_name = MagicBeesResourceLocation.create("flowersBotania");
+	public static final ResourceLocation bot_dreaming_name = MagicBeesResourceLocation.create("effectDreaming");
+	public static final ResourceLocation te_spawnBlizz_name = MagicBeesResourceLocation.create("spawnBlizz");
+	public static final ResourceLocation te_spawnBlitz_name = MagicBeesResourceLocation.create("spawnBlitz");
+	public static final ResourceLocation te_spawnBasalz_name = MagicBeesResourceLocation.create("spawnBasalz");
 
 	public static AlleleFlowerProvider flowersBotania;
 	public static IAlleleEffect effectDreaming, effectSpawnBlizz, effectSpawnBlitz, effectSpawnBasalz;

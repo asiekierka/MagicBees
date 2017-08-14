@@ -29,7 +29,7 @@ public class ItemManaSteelScoop extends AbstractTexturedItem implements IManaUsi
 	public static final int MANA_PER_DAMAGE = 30;
 
 	public ItemManaSteelScoop() {
-		super(new MagicBeesResourceLocation("manasteelscoop"));
+		super(MagicBeesResourceLocation.create("manasteelscoop"));
 		this.maxStackSize = 1;
 		this.setMaxDamage(20);
 		this.setMaxStackSize(1);

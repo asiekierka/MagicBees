@@ -31,17 +31,10 @@ import javax.annotation.Nullable;
  * Created by Elec332 on 15-4-2017.
  */
 public class BlockHive extends elec332.core.compat.forestry.bee.BlockHive<EnumBeeHives> implements INoJsonBlock, ITileEntityProvider {
-
 	@SideOnly(Side.CLIENT)
 	private TextureAtlasSprite[][] textures;
 	@SideOnly(Side.CLIENT)
 	private IBakedModel[] models;
-
-	@Override
-	public BlockHive register(@Nonnull ResourceLocation rl) {
-		super.register(rl);
-		return this;
-	}
 
 	@Nonnull
 	@Override
@@ -72,7 +65,7 @@ public class BlockHive extends elec332.core.compat.forestry.bee.BlockHive<EnumBe
 		textures = new TextureAtlasSprite[types][EnumFacing.VALUES.length];
 		for (int i = 0; i < types; i++) {
 			for (EnumFacing facing : EnumFacing.VALUES){
-				textures[i][facing.ordinal()] = iconRegistrar.registerSprite(new MagicBeesResourceLocation("blocks/beehive."+i+(facing.getAxis().isVertical() ? ".top" : ".side")));
+				textures[i][facing.ordinal()] = iconRegistrar.registerSprite(MagicBeesResourceLocation.create("blocks/beehive."+i+(facing.getAxis().isVertical() ? ".top" : ".side")));
 			}
 		}
 	}

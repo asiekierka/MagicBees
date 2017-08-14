@@ -30,14 +30,14 @@ public final class AlleleRegister {
             spawnSheep, spawnCat, spawnHorse, spawnGhast, spawnSpider, spawnBlaze, spawnZombie;
 
     public static void init(){
-        flowersBookshelf = new AlleleFlowerProvider(new MagicBeesResourceLocation("flowersBookshelf"), new FlowerProvider("flowersBookshelf"));
+        flowersBookshelf = new AlleleFlowerProvider(MagicBeesResourceLocation.create("flowersBookshelf"), new FlowerProvider("flowersBookshelf"));
         flowersBookshelf.registerAcceptableFlower(Blocks.BOOKSHELF);
-        effectSlowSpeed = new AlleleEffectPotion(new MagicBeesResourceLocation("effectSlowSpeed"), new PotionEffect(MobEffects.SLOWNESS, 60));
+        effectSlowSpeed = new AlleleEffectPotion(MagicBeesResourceLocation.create("effectSlowSpeed"), new PotionEffect(MobEffects.SLOWNESS, 60));
 
-        effectWithering = new AlleleEffectPotion(new MagicBeesResourceLocation("effectWithering"), new PotionEffect(MobEffects.WITHER, 15));
-        alleleInvisibility = new AlleleEffectPotion(new MagicBeesResourceLocation("alleleInvisibility"), new PotionEffect(MobEffects.INVISIBILITY, 10)).setBypassesArmour();
-        effectCrumbling = new AlleleEffectCrumbling(new MagicBeesResourceLocation("crumbling"), MagicBees.crumblingHandler);
-        effectTransmuting = new AlleleEffectTransmuting(new MagicBeesResourceLocation("effectTransmuting"), MagicBees.transmutationController);
+        effectWithering = new AlleleEffectPotion(MagicBeesResourceLocation.create("effectWithering"), new PotionEffect(MobEffects.WITHER, 15));
+        alleleInvisibility = new AlleleEffectPotion(MagicBeesResourceLocation.create("alleleInvisibility"), new PotionEffect(MobEffects.INVISIBILITY, 10)).setBypassesArmour();
+        effectCrumbling = new AlleleEffectCrumbling(MagicBeesResourceLocation.create("crumbling"), MagicBees.crumblingHandler);
+        effectTransmuting = new AlleleEffectTransmuting(MagicBeesResourceLocation.create("effectTransmuting"), MagicBees.transmutationController);
 
         spawnWolf = newMobEffect("Canine", false, "Wolf").setThrottle(650).setSpawnChance(40).setMaxMobsInArea(2);
         spawnBats = newMobEffect("Batty", false, "Bat").setThrottle(150);
@@ -58,7 +58,7 @@ public final class AlleleRegister {
     }
 
     private static AlleleEffectSpawnMob newMobEffect(String name, boolean dominant, String mob){
-        return new AlleleEffectSpawnMob(new MagicBeesResourceLocation(name), new ResourceLocation(mob));
+        return new AlleleEffectSpawnMob(MagicBeesResourceLocation.create(name), new ResourceLocation(mob));
     }
 
 }

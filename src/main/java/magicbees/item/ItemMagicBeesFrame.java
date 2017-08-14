@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class ItemMagicBeesFrame extends AbstractTexturedItem implements IDefaultHiveFrame, IColoredItem {
 
     public ItemMagicBeesFrame(EnumBeeModifiers modifier) {
-        super(new MagicBeesResourceLocation("frames."+modifier.name().toLowerCase()));
+        super(MagicBeesResourceLocation.create("frames."+modifier.name().toLowerCase()));
         setMaxDamage(modifier.getMaxDamage());
         setCreativeTab(MagicBees.creativeTab);
         this.modifier = modifier;

@@ -180,7 +180,7 @@ public class TileEntityEffectJar extends TileEntity implements ITickable, ISimpl
 
 	@Override
 	public void modifyWindow(Window window, Object... objects) {
-		window.setBackground(new MagicBeesResourceLocation("gui/effectJarGui"));
+		window.setBackground(MagicBeesResourceLocation.create("gui/effectJarGui"));
 		window.addWidget(new WidgetSlot(beeSlots, 0, 80, 22));
 		window.addWidget(new Widget(0, 0, 0, 0, 0, 0){
 

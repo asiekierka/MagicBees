@@ -25,14 +25,21 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.BotaniaAPIClient;
 import vazkii.botania.api.lexicon.LexiconEntry;
@@ -47,13 +54,16 @@ import vazkii.botania.common.lib.LibItemNames;
  */
 @ElecModule(owner = MagicBees.modid, name = "Botania Integration", modDependencies = ModNames.BOTANIA)
 public class IntegrationBotania {
-
 	private Block livingRock, dreamWood;
 	private Item itemPetal;
+	private IRecipe manasteelScoopRecipe, manasteelGrafterRecipe;
+
+	@SidedProxy(modId = MagicBees.modid, clientSide = "magicbees.integration.botania.IntegrationBotaniaProxyClient", serverSide = "magicbees.integration.botania.IntegrationBotaniaProxyClient")
+	public static IntegrationBotaniaProxy proxy;
 
 	@ElecModule.EventHandler
+	@Optional.Method(modid = "botania")
 	public void preInit(FMLPreInitializationEvent event){
-
 		BotaniaAPI.registerSubTile(SubTileBeegonia.NAME, SubTileBeegonia.class);
 		BotaniaAPI.registerSubTileSignature(SubTileBeegonia.class, new BotaniaSignature(SubTileBeegonia.NAME));
 		BotaniaAPI.addSubTileToCreativeMenu(SubTileBeegonia.NAME);
@@ -65,18 +75,13 @@ public class IntegrationBotania {
 		BotaniaAPI.registerSubTile(SubTileHibeescus.NAME, SubTileHibeescus.class);
 		BotaniaAPI.registerSubTileSignature(SubTileHibeescus.class, new BotaniaSignature(SubTileHibeescus.NAME));
 		BotaniaAPI.addSubTileToCreativeMenu(SubTileHibeescus.NAME);
-		if (FMLCommonHandler.instance().getSide().isClient()){
-			//cl(); MC iz broken...
-		}
-	}
 
-	@SideOnly(Side.CLIENT)
-	private void cl(){
-		ModelResourceLocation mrl = new ModelResourceLocation(new MagicBeesResourceLocation("beegonia"), "normal");
-		BotaniaAPIClient.registerSubtileModel(SubTileBeegonia.class, mrl);
+		proxy.preInit();
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@ElecModule.EventHandler
+	@Optional.Method(modid = "botania")
 	public void init(FMLInitializationEvent event){
 		IBlockState livingWood = BeeIntegrationInterface.livingWood = Utils.getBlock(ModNames.BOTANIA, "livingwood").getDefaultState();
 		livingRock = Utils.getBlock(ModNames.BOTANIA, "livingrock");
@@ -106,21 +111,22 @@ public class IntegrationBotania {
 		BeeIntegrationInterface.itemPetal = itemPetal = Utils.getItem(ModNames.BOTANIA, "petal");
 		BeeIntegrationInterface.itemPastureSeed = Utils.getItem(ModNames.BOTANIA, "grassSeeds");
 		BeeIntegrationInterface.seedTypes = 9;
+	}
 
+	@SubscribeEvent
+	@Optional.Method(modid = "botania")
+	public void onRecipeRegister(RegistryEvent.Register<IRecipe> event) {
+		manasteelScoopRecipe = new ShapedOreRecipe(ItemRegister.manasteelScoop.getRegistryName(), new ItemStack(ItemRegister.manasteelScoop), "twt", "tmt", " t ", 'm', new ItemStack(ModItems.manaResource, 1, 0), 'w', Blocks.WOOL, 't', "stickWood");
+		manasteelGrafterRecipe = new ShapedOreRecipe(ItemRegister.manasteelgrafter.getRegistryName(), new ItemStack(ItemRegister.manasteelgrafter), "  m", " t ", "t  ", 'm', new ItemStack(ModItems.manaResource, 1, 0), 't', "stickWood");
+		manasteelScoopRecipe.setRegistryName(ItemRegister.manasteelScoop.getRegistryName());
+		manasteelGrafterRecipe.setRegistryName(ItemRegister.manasteelgrafter.getRegistryName());
 
-
+		event.getRegistry().registerAll(manasteelScoopRecipe, manasteelGrafterRecipe);
 	}
 
 	@ElecModule.EventHandler
+	@Optional.Method(modid = "botania")
 	public void postInit(FMLPostInitializationEvent event){
-
-		GameRegistry.addRecipe(new ItemStack(ItemRegister.manasteelScoop), "twt", "tmt", " t ", 'm', new ItemStack(ModItems.manaResource, 1, 0), 'w', Blocks.WOOL, 't', Items.STICK);
-		IRecipe manasteelScoopRecipe = RecipeHelper.getCraftingManager().getRecipeList().get(RecipeHelper.getCraftingManager().getRecipeList().size() - 1);
-
-		GameRegistry.addRecipe(new ItemStack(ItemRegister.manasteelgrafter), "  m", " t ", "t  ", 'm', new ItemStack(ModItems.manaResource, 1, 0), 't', Items.STICK);
-		IRecipe manasteelGrafterRecipe = RecipeHelper.getCraftingManager().getRecipeList().get(RecipeHelper.getCraftingManager().getRecipeList().size() - 1);
-
-
 		RecipeManaInfusion infusionBeeBotanical = new RecipeManaInfusionBeeSpecies(EnumBeeSpecies.BOT_BOTANIC, EnumBeeSpecies.BOT_ROOTED, 55000, EnumBeeType.DRONE);
 		BotaniaAPI.manaInfusionRecipes.add(infusionBeeBotanical);
 
@@ -134,8 +140,8 @@ public class IntegrationBotania {
 		LexiconEntry entryManasteelForestryTools = new BotaniaLexiconEntry("magicbees.botania.lexicon.manasteelTools.title", BotaniaAPI.categoryTools);
 		entryManasteelForestryTools.setIcon(new ItemStack(ItemRegister.manasteelScoop));
 		entryManasteelForestryTools.addPage(BotaniaAPI.internalHandler.textPage("magicbees.botania.lexicon.manasteelTools.0"));
-		entryManasteelForestryTools.addPage(BotaniaAPI.internalHandler.craftingRecipePage("magicbees.botania.lexicon.manasteelScoop", manasteelScoopRecipe));
-		entryManasteelForestryTools.addPage(BotaniaAPI.internalHandler.craftingRecipePage("magicbees.botania.lexicon.manasteelGrafter", manasteelGrafterRecipe));
+		entryManasteelForestryTools.addPage(BotaniaAPI.internalHandler.craftingRecipePage("magicbees.botania.lexicon.manasteelScoop", manasteelScoopRecipe.getRegistryName()));
+		entryManasteelForestryTools.addPage(BotaniaAPI.internalHandler.craftingRecipePage("magicbees.botania.lexicon.manasteelGrafter", manasteelGrafterRecipe.getRegistryName()));
 
 		LexiconEntry entryBeeTrade = new BotaniaLexiconEntry("magicbees.botania.lexicon.beeAlfheim.title", BotaniaAPI.categoryAlfhomancy);
 		entryBeeTrade.setIcon(BeeManager.beeRoot.getMemberStack(EnumBeeSpecies.BOT_ALFHEIM.getIndividual(), EnumBeeType.PRINCESS));

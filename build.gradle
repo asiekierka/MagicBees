@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -73,8 +73,10 @@ minecraft {
 }
 
 dependencies {
-	deobfCompile "mezz.jei:jei_1.11.2:2-4.2.4.231"
-	deobfCompile "net.sengir.forestry:forestry_${config.forestry_version}"
+	deobfCompile "mezz.jei:jei_1.12.1:4.7.5.87"
+	deobfCompile ("net.sengir.forestry:forestry_${config.forestry_version}") {
+		exclude module: "jei_1.12"
+	}	
 }
 
 processResources {

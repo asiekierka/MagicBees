@@ -11,16 +11,19 @@ import magicbees.util.MagicBeesResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Created by Elec332 on 4-3-2017.
  */
 public final class ItemRegister {
-
     public static ItemEnumBased<EnumCombType> combItem;
     public static ItemEnumBased<EnumDropType> dropItem;
     public static ItemEnumBased<EnumPollenType> pollenItem;
@@ -32,47 +35,52 @@ public final class ItemRegister {
     public static Item magicFrame, resilientFrame, gentleFrame, metabolicFrame, necroticFrame, temporalFrame, oblivionFrame;
     public static Item mysteriousMagnet, moonDial, ironNugget;
     public static Item manasteelgrafter, manasteelScoop;
+    public static Item hiveBlockItem, effectJarItem;
 
-    public static void init(){
-        combItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("beeComb"), EnumCombType.class));
-        dropItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("drop"), EnumDropType.class));
-        pollenItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("pollen"), EnumPollenType.class));
-        propolisItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("propolis"), EnumPropolisType.class));
-        waxItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("wax"), EnumWaxType.class));
-        resourceItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("resource"), EnumResourceType.class));
-        orePartItem = GameRegistry.register(new ItemEnumBased<>(new MagicBeesResourceLocation("orepart"), EnumNuggetType.class));
+    public static void preInit() {
+        combItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("beeComb"), EnumCombType.class));
+        dropItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("drop"), EnumDropType.class));
+        pollenItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("pollen"), EnumPollenType.class));
+        propolisItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("propolis"), EnumPropolisType.class));
+        waxItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("wax"), EnumWaxType.class));
+        resourceItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("resource"), EnumResourceType.class));
+        orePartItem = (new ItemEnumBased<>(MagicBeesResourceLocation.create("orepart"), EnumNuggetType.class));
 
-        magicFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.MAGIC));
-        resilientFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.RESILIENT));
-        gentleFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.GENTLE));
-        metabolicFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.METABOLIC));
-        necroticFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.NECROTIC));
-        temporalFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.TEMPORAL));
-        oblivionFrame = GameRegistry.register(new ItemMagicBeesFrame(EnumBeeModifiers.OBLIVION));
+        magicFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.MAGIC));
+        resilientFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.RESILIENT));
+        gentleFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.GENTLE));
+        metabolicFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.METABOLIC));
+        necroticFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.NECROTIC));
+        temporalFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.TEMPORAL));
+        oblivionFrame = (new ItemMagicBeesFrame(EnumBeeModifiers.OBLIVION));
 
-        mysteriousMagnet = GameRegistry.register(new ItemMysteriousMagnet());
-        moonDial = GameRegistry.register(new ItemMoonDial());
+        mysteriousMagnet = (new ItemMysteriousMagnet());
+        moonDial = (new ItemMoonDial());
 
-        manasteelgrafter = GameRegistry.register(new ItemManaSteelGrafter());
-        manasteelScoop = GameRegistry.register(new ItemManaSteelScoop());
+        manasteelgrafter = (new ItemManaSteelGrafter());
+        manasteelScoop = (new ItemManaSteelScoop());
 
-        fixIronNuggetStuff();
+        hiveBlockItem = BlockRegister.hiveBlock.createItemBlock();
+        effectJarItem = new ItemBlock(BlockRegister.effectJar);
+        effectJarItem.setRegistryName(BlockRegister.effectJar.getRegistryName());
+    }
 
-        for (EnumCombType comb : EnumCombType.values()){
+    public static void init() {
+        for (EnumCombType comb : EnumCombType.values()) {
             OreDictionary.registerOre("beeComb", combItem.getStackFromType(comb));
         }
-
     }
 
-    private static void fixIronNuggetStuff(){
-        if (RegistryHelper.getItemRegistry().containsKey(new ResourceLocation("iron_nugget"))){
-            ironNugget = RegistryHelper.getItemRegistry().getObject(new ResourceLocation("iron_nugget"));
-        }
-        if (ironNugget == null){
-            ironNugget = GameRegistry.register(new AbstractTexturedItem(new MagicBeesResourceLocation("iron_nugget")){}.setCreativeTab(CreativeTabs.MATERIALS));
-            OreDictionary.registerOre("nuggetIron", ironNugget);
-            RecipeHelper.getCraftingManager().addRecipe(new ItemStack(Items.IRON_INGOT), "xxx", "xxx", "xxx", 'x', ironNugget);
-        }
-    }
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event){
+        event.getRegistry().registerAll(combItem, dropItem, pollenItem, propolisItem, waxItem, resourceItem, orePartItem);
 
+        event.getRegistry().registerAll(magicFrame, resilientFrame, gentleFrame, metabolicFrame, necroticFrame, temporalFrame, oblivionFrame);
+
+        event.getRegistry().registerAll(mysteriousMagnet, moonDial);
+
+        event.getRegistry().registerAll(manasteelgrafter, manasteelScoop);
+
+        event.getRegistry().registerAll(hiveBlockItem, effectJarItem);
+    }
 }

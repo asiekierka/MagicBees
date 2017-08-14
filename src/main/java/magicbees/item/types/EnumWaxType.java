@@ -51,8 +51,8 @@ public enum EnumWaxType implements IEnumItem{
     private static final ResourceLocation TEXTURE, TEXTURE_S;
 
     static {
-        TEXTURE = new MagicBeesResourceLocation("items/wax.0");
-        TEXTURE_S = new MagicBeesResourceLocation("items/wax.1");
+        TEXTURE = MagicBeesResourceLocation.create("items/wax.0");
+        TEXTURE_S = MagicBeesResourceLocation.create("items/wax.1");
     }
 
 }

@@ -8,14 +8,22 @@ import forestry.apiculture.items.ItemRegistryApiculture;
 import forestry.core.fluids.Fluids;
 import magicbees.item.types.*;
 import magicbees.util.Config;
+import magicbees.util.EnumOreResourceType;
+import magicbees.util.MagicBeesResourceLocation;
 import magicbees.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Map;
 
@@ -25,10 +33,12 @@ import static magicbees.init.ItemRegister.*;
  * Created by Elec332 on 13-2-2017.
  */
 public final class RecipeRegister {
+    private ItemStack beesWax, honeyDrop, honeyDew, magicWax, refractoryWax, pollen, royaljelly;
 
-    private static ItemStack beesWax, honeyDrop, honeyDew, magicWax, refractoryWax, pollen, royaljelly;
+    @SubscribeEvent
+    public void onRegisterRecipe(RegistryEvent.Register<IRecipe> event) {
+        EnumOreResourceType.registerRecipes(event.getRegistry());
 
-    public static void init(){
         ItemRegistryApiculture ai = Utils.getApicultureItems();
         beesWax = Utils.getCoreItems().beeswax.getItemStack();
         honeyDrop = ai.honeyDrop.getItemStack();
@@ -37,157 +47,195 @@ public final class RecipeRegister {
         magicWax = getWax(EnumWaxType.MAGIC);
         pollen = ai.pollenCluster.getItemStack();
         royaljelly = ai.royalJelly.getItemStack();
-        registerRecipes();
-        registerForestryRecipes();
+        registerRecipes(event.getRegistry());
+        registerForestryRecipes(event.getRegistry());
     }
 
-    private static void registerRecipes(){
+    private void addRecipe(IForgeRegistry<IRecipe> registry, ItemStack stack, Object... objects) {
+        addRecipe(registry, stack.getItem().getRegistryName(), stack, objects);
+    }
+
+    private void addRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, ItemStack stack, Object... objects) {
+        addRecipe(registry, location, location, stack, objects);
+    }
+
+    private void addRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, ResourceLocation group, ItemStack stack, Object... objects) {
+        ShapedOreRecipe recipe = new ShapedOreRecipe(group, stack, objects);
+        recipe.setRegistryName(location);
+        registry.register(recipe);
+    }
+
+    private void addRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, IRecipe recipe) {
+        addRecipe(registry, location, location, recipe);
+    }
+
+    private void addRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, ResourceLocation group, IRecipe recipe) {
+        recipe.setRegistryName(location);
+        registry.register(recipe);
+    }
+
+    private void addShapelessRecipe(IForgeRegistry<IRecipe> registry, ItemStack stack, Object... objects) {
+        addShapelessRecipe(registry, stack.getItem().getRegistryName(), stack, objects);
+    }
+
+    private void addShapelessRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, ItemStack stack, Object... objects) {
+        addShapelessRecipe(registry, location, location, stack, objects);
+    }
+
+    private void addShapelessRecipe(IForgeRegistry<IRecipe> registry, ResourceLocation location, ResourceLocation group, ItemStack stack, Object... objects) {
+        ShapelessOreRecipe recipe = new ShapelessOreRecipe(group, stack, objects);
+        recipe.setRegistryName(location);
+        registry.register(recipe);
+    }
+
+
+    private void registerRecipes(IForgeRegistry<IRecipe> registry) {
         ItemStack input;
         ItemStack output;
 
         input = getResource(EnumResourceType.EXTENDED_FERTILIZER);
         output = Utils.getCoreItems().fertilizerCompound.getItemStack(6);
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, output,
                 " S ", " F ", " S ",
                 'F', input,
-                'S', Blocks.SAND
+                'S', "sand"
         );
 
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, output,
                 "   ", "SFS", "   ",
                 'F', input,
-                'S', Blocks.SAND
+                'S', "sand"
         );
 
         output = ItemStackHelper.copyItemStack(output);
         output.stackSize = 12;
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, output,
                 "aaa", "aFa", "aaa",
                 'F', input,
                 'a', Utils.getCoreItems().ash
         );
 
-        GameRegistry.addRecipe(new ItemStack(Items.EXPERIENCE_BOTTLE),
+        addRecipe(registry, new ItemStack(Items.EXPERIENCE_BOTTLE),
                 "DDD", "DBD", "DDD",
                 'D', getDrop(EnumDropType.INTELLECT),
                 'B', Items.GLASS_BOTTLE
         );
 
-        GameRegistry.addRecipe(new ItemStack(Blocks.SOUL_SAND, 4),
+        addRecipe(registry, new ItemStack(Blocks.SOUL_SAND, 4),
                 "SwS", "wDw", "SwS",
-                'S', Blocks.SAND,
-                'D', Blocks.DIRT,
+                'S', "sand",
+                'D', "dirt",
                 'w', getWax(EnumWaxType.SOUL)
         );
 
-        GameRegistry.addRecipe(new ItemStack(Blocks.SOUL_SAND, 4),
+        addRecipe(registry, new ItemStack(Blocks.SOUL_SAND, 4),
                 "wSw", "SDS", "wSw",
-                'S', Blocks.SAND,
-                'D', Blocks.DIRT,
+                'S', "sand",
+                'D', "dirt",
                 'w', getWax(EnumWaxType.SOUL)
         );
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemRegister.moonDial),
+        addRecipe(registry, new ItemStack(ItemRegister.moonDial),
                 "DqD", "qrq", "DqD",
-                'r', Items.REDSTONE,
-                'q', Items.QUARTZ,
+                'r', "dustRedstone",
+                'q', "gemQuartz",
                 'D', "dyeGreen"
-        ));
+        );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.SKULL_FRAGMENT),
+        addRecipe(registry, getResource(EnumResourceType.SKULL_FRAGMENT),
                 "xxx", "xxx", "xxx",
                 'x', getResource(EnumResourceType.SKULL_CHIP)
         );
 
-        GameRegistry.addRecipe(new ItemStack(Items.SKULL, 1, 1),
+        addRecipe(registry, new ItemStack(Items.SKULL, 1, 1),
                 "xxx", "xxx",
                 'x', getResource(EnumResourceType.SKULL_FRAGMENT)
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.DRAGON_CHUNK),
+        addRecipe(registry, getResource(EnumResourceType.DRAGON_CHUNK),
                 "xxx", "xxx",
                 'x', getResource(EnumResourceType.DRAGON_DUST)
         );
 
-        GameRegistry.addRecipe(new ItemStack(Blocks.DRAGON_EGG, 1),
+        addRecipe(registry, new ItemStack(Blocks.DRAGON_EGG, 1),
                 "ccc", "cec", "ccc",
                 'c', getResource(EnumResourceType.DRAGON_CHUNK),
                 'e', getResource(EnumResourceType.ESSENCE_FALSE_LIFE)
         );
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(getResource(EnumResourceType.ESSENCE_EVERLASTING_DURABILITY),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_EVERLASTING_DURABILITY),
                 "gwg", "wiw", "gwg",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', "waxMagical",
-                'i', Blocks.IRON_BLOCK
-        ));
+                'i', "blockIron"
+        );
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(getResource(EnumResourceType.ESSENCE_EVERLASTING_DURABILITY),
+        addRecipe(registry,getResource(EnumResourceType.ESSENCE_EVERLASTING_DURABILITY),
                 "wgw", "gig", "wgw",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', "waxMagical",
-                'i', Blocks.IRON_BLOCK
-        ));
+                'i', "blockIron"
+        );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_FALSE_LIFE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_FALSE_LIFE),
                 "gwg", "wfw", "gwg",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'f', Blocks.RED_FLOWER
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_FALSE_LIFE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_FALSE_LIFE),
                 "wgw", "gfg", "wgw",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'f', Blocks.RED_FLOWER
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
                 "gwg", "wfw", "gwg",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'f', Items.ROTTEN_FLESH
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
                 "wgw", "gfg", "wgw",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'f', Items.ROTTEN_FLESH
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_LOST_TIME),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_LOST_TIME),
                 "wgw", "gcg", "wgw",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'c', Items.CLOCK
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_LOST_TIME),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_LOST_TIME),
                 "gwg", "wcw", "gwg",
-                'g', Blocks.GLASS,
+                'g', "blockGlass",
                 'w', getWax(EnumWaxType.SOUL),
                 'c', Items.CLOCK
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_FICKLE_PERMANENCE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_FICKLE_PERMANENCE),
                 "wew", "gcg", "wew",
                 'w', getWax(EnumWaxType.SOUL),
                 'c', Items.MAGMA_CREAM,
-                'e', Items.EGG,
-                'g', Blocks.GLOWSTONE
+                'e', "egg",
+                'g', "glowstone"
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_FICKLE_PERMANENCE),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_FICKLE_PERMANENCE),
                 "wgw", "ece", "wgw",
                 'w', getWax(EnumWaxType.SOUL),
                 'c', Items.MAGMA_CREAM,
-                'e', Items.EGG,
-                'g', Blocks.GLOWSTONE
+                'e', "egg",
+                'g', "glowstone"
         );
 
-        GameRegistry.addRecipe(getResource(EnumResourceType.ESSENCE_SCORNFUL_OBLIVION),
+        addRecipe(registry, getResource(EnumResourceType.ESSENCE_SCORNFUL_OBLIVION),
                 "gst", "sEs", "tsg",
                 'g', getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
                 't', getResource(EnumResourceType.ESSENCE_LOST_TIME),
@@ -195,75 +243,75 @@ public final class RecipeRegister {
                 'E', Blocks.DRAGON_EGG
         );
 
-        GameRegistry.addRecipe(new ItemStack(magicFrame),
+        addRecipe(registry, new ItemStack(magicFrame),
                 "www", "wfw", "www",
                 'w', magicWax,
                 'f', Utils.getApicultureItems().frameUntreated
         );
 
-        GameRegistry.addRecipe(new ItemStack(temporalFrame),
+        addRecipe(registry, new ItemStack(temporalFrame),
                 "sPs", "PfP", "sPs",
-                's', Blocks.SAND,
+                's', "sand",
                 'P', getPollen(EnumPollenType.PHASED),
                 'f', magicFrame
         );
 
         input = new ItemStack(magicFrame);
-        GameRegistry.addShapelessRecipe(new ItemStack(resilientFrame),
+        addShapelessRecipe(registry, new ItemStack(resilientFrame),
                 getResource(EnumResourceType.ESSENCE_EVERLASTING_DURABILITY),
                 input
         );
 
-        GameRegistry.addShapelessRecipe(new ItemStack(gentleFrame),
+        addShapelessRecipe(registry, new ItemStack(gentleFrame),
                 getResource(EnumResourceType.ESSENCE_FALSE_LIFE),
                 input
         );
 
-        GameRegistry.addShapelessRecipe(new ItemStack(necroticFrame),
+        addShapelessRecipe(registry, new ItemStack(necroticFrame),
                 getResource(EnumResourceType.ESSENCE_SHALLOW_GRAVE),
                 input
         );
 
-        GameRegistry.addShapelessRecipe(new ItemStack(metabolicFrame),
+        addShapelessRecipe(registry, new ItemStack(metabolicFrame),
                 getResource(EnumResourceType.ESSENCE_FICKLE_PERMANENCE),
                 input
         );
 
-        GameRegistry.addShapelessRecipe(new ItemStack(temporalFrame),
+        addShapelessRecipe(registry, new ItemStack(temporalFrame),
                 getResource(EnumResourceType.ESSENCE_LOST_TIME),
                 input
         );
 
-        GameRegistry.addShapelessRecipe(new ItemStack(oblivionFrame),
+        addShapelessRecipe(registry, new ItemStack(oblivionFrame),
                 getResource(EnumResourceType.ESSENCE_SCORNFUL_OBLIVION),
                 Utils.getApicultureItems().frameProven.getItemStack()
         );
 
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BlockRegister.effectJar),
+        addRecipe(registry, new ItemStack(BlockRegister.effectJar),
                 "GSG", "QPQ", "GGG",
-                'G', Blocks.GLASS,
+                'G', "blockGlass",
                 'S', "slabWood",
                 'P', getPollen(EnumPollenType.UNUSUAL),
-                'Q', Items.QUARTZ
-        ));
+                'Q', "gemQuartz"
+        );
 /* todo
         output = new ItemStack(Config.magicApiary);
-        GameRegistry.addShapelessRecipe(output,
+        addShapelessRecipe(registry, output,
                 Config.pollen.getStackForType(PollenType.UNUSUAL, 2),
                 Config.drops.getStackForType(DropType.ENCHANTED, 2),
                 new ItemStack(ForestryHelper.apicultureBlock, 1, ForestryHelper.ApicultureBlock.APIARY.ordinal())
         );
 
-        GameRegistry.addRecipe(new ItemStack(Config.enchantedEarth),
+        addRecipe(registry, new ItemStack(Config.enchantedEarth),
                 "d d", " e ", "d d",
-                'd', new ItemStack(Blocks.DIRT, 1, OreDictionary.WILDCARD_VALUE),
+                'd', new ItemStack("dirt", 1, OreDictionary.WILDCARD_VALUE),
                 'e', Config.miscResources.getStackForType(ResourceType.ESSENCE_FALSE_LIFE)
         );
 
-        GameRegistry.addRecipe(new ItemStack(Config.enchantedEarth),
+        addRecipe(registry, new ItemStack(Config.enchantedEarth),
                 " d ", "ded", " d ",
-                'd', new ItemStack(Blocks.DIRT, 1, OreDictionary.WILDCARD_VALUE),
+                'd', new ItemStack("dirt", 1, OreDictionary.WILDCARD_VALUE),
                 'e', Config.miscResources.getStackForType(ResourceType.ESSENCE_FALSE_LIFE)
         );
 */
@@ -273,7 +321,7 @@ public final class RecipeRegister {
             NuggetType.COPPER.setInactive();
         }
         else {
-            GameRegistry.addRecipe(new ShapedOreRecipe(OreDictionary.getOres("ingotCopper").get(0),
+            addRecipe(registry, new ShapedOreRecipe(OreDictionary.getOres("ingotCopper").get(0),
                     "xxx", "xxx", "xxx",
                     'x', "nuggetCopper"
             ));
@@ -283,7 +331,7 @@ public final class RecipeRegister {
             NuggetType.TIN.setInactive();
         }
         else {
-            GameRegistry.addRecipe(new ShapedOreRecipe(OreDictionary.getOres("ingotTin").get(0),
+            addRecipe(registry, new ShapedOreRecipe(OreDictionary.getOres("ingotTin").get(0),
                     "xxx", "xxx", "xxx",
                     'x', "nuggetTin"
             ));
@@ -293,7 +341,7 @@ public final class RecipeRegister {
             NuggetType.SILVER.setInactive();
         }
         else {
-            GameRegistry.addRecipe(new ShapedOreRecipe(OreDictionary.getOres("ingotSilver").get(0),
+            addRecipe(registry, new ShapedOreRecipe(OreDictionary.getOres("ingotSilver").get(0),
                     "xxx", "xxx", "xxx",
                     'x', "nuggetSilver"
             ));
@@ -303,34 +351,34 @@ public final class RecipeRegister {
             NuggetType.LEAD.setInactive();
         }
         else {
-            GameRegistry.addRecipe(new ShapedOreRecipe(OreDictionary.getOres("ingotLead").get(0),
+            addRecipe(registry, new ShapedOreRecipe(OreDictionary.getOres("ingotLead").get(0),
                     "xxx", "xxx", "xxx",
                     'x', "nuggetLead"
             ));
         }
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.IRON_INGOT),
+        addRecipe(registry, new ShapedOreRecipe(new ItemStack(Items.IRON_INGOT),
                 "xxx", "xxx", "xxx",
                 'x', "nuggetIron"
         ));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.DIAMOND),
+        addRecipe(registry, new ShapedOreRecipe(new ItemStack(Items.DIAMOND),
                 "xxx", "xxx", "xxx",
                 'x', "nuggetDiamond"
         ));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.EMERALD),
+        addRecipe(registry, new ShapedOreRecipe(new ItemStack(Items.EMERALD),
                 "xxx", "xxx", "xxx",
                 'x', "nuggetEmerald"
         ));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemInterface.getItemStack("apatite"),
+        addRecipe(registry, new ShapedOreRecipe(ItemInterface.getItemStack("apatite"),
                 "xxx", "xxx", "xxx",
                 'x', Config.nuggets.getStackForType(NuggetType.APATITE)
         ));
 */
         output = getResource(EnumResourceType.DIMENSIONAL_SINGULARITY);
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, output,
                 " G ", "QEQ", " W ",
                 'E', Items.ENDER_EYE,
                 'Q', Blocks.QUARTZ_BLOCK,
@@ -341,22 +389,24 @@ public final class RecipeRegister {
         Magic capsules
         output = new ItemStack(Config.magicCapsule);
         output.stackSize = 4;
-        GameRegistry.addRecipe(new ShapedOreRecipe(output,
+        addRecipe(registry, new ShapedOreRecipe(output,
                 "WWW",
                 'W', "waxMagical"
         ));
 
         output = Config.voidCapsule.getCapsuleForLiquid(FluidType.EMPTY);
         output.stackSize = 4;
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, output,
                 "T T", "GFG", "T T",
-                'G', Blocks.GLASS_PANE,
+                'G', "blockGlass"_PANE,
                 'F', Config.miscResources.getStackForType(ResourceType.DIMENSIONAL_SINGULARITY),
                 'T', Items.GOLD_NUGGET
         );
 */
+        ResourceLocation magnetGroup = MagicBeesResourceLocation.create("mysteriousMagnet");
+
         output = new ItemStack(ItemRegister.mysteriousMagnet);
-        GameRegistry.addRecipe(output,
+        addRecipe(registry, MagicBeesResourceLocation.create("mysteriousMagnet_0"), magnetGroup, output,
                 " i ", "cSc", " d ",
                 'i', Items.IRON_INGOT,
                 'c', Items.COMPASS,
@@ -365,23 +415,23 @@ public final class RecipeRegister {
         );
         for (int level = 1; level <= Config.magnetMaxLevel; level++) {
             output = new ItemStack(ItemRegister.mysteriousMagnet, 1, level * 2);
-            GameRegistry.addRecipe(new ShapedOreRecipe(output,
+            addRecipe(registry,  MagicBeesResourceLocation.create("mysteriousMagnet_" + level), magnetGroup, output,
                     " d ", "mSm", " B ",
                     'd', Items.DIAMOND,
                     'm', new ItemStack(ItemRegister.mysteriousMagnet, 1, (level - 1) * 2),
                     'B', Blocks.REDSTONE_BLOCK,
                     'S', getResource(EnumResourceType.DIMENSIONAL_SINGULARITY)
-            ));
+            );
         }
 
     }
 
-    private static void registerForestryRecipes(){
+    private void registerForestryRecipes(IForgeRegistry<IRecipe> registry) {
         registerCentrifugeRecipes();
         registerCarpenterRecipes();
     }
 
-    private static void registerCentrifugeRecipes(){
+    private void registerCentrifugeRecipes(){
         CombCentrifugeRecipe recipe;
 
         recipe = new CombCentrifugeRecipe(EnumCombType.MUNDANE);
@@ -488,7 +538,7 @@ public final class RecipeRegister {
         recipe.register(20);
     }
 
-    private static void registerCarpenterRecipes(){
+    private void registerCarpenterRecipes(){
         ItemStack input;
         ItemStack output;
 

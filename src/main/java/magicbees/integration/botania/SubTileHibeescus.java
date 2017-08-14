@@ -94,9 +94,9 @@ public class SubTileHibeescus extends SubTileFunctional {
 		List<EntityItem> items = supertile.getWorld().getEntitiesWithinAABB(EntityItem.class, getSearchBoundingBox());
 
 		for (EntityItem itemEntity : items) {
-			ItemStack item = itemEntity.getEntityItem();
+			ItemStack item = itemEntity.getItem();
 			if (!itemEntity.isDead && isItemPrincessOrQueen(item)) {
-				beeSlot = itemEntity.getEntityItem().copy();
+				beeSlot = itemEntity.getItem().copy();
 				beeSlot.stackSize = 1;
 				operationTicksRemaining = (long)(OPERATION_TICKS_TIME * BotaniaIntegrationConfig.hibeescusTicksMultiplier) + supertile.getWorld().rand.nextInt(200);
 				manaCostRollover = 0f;

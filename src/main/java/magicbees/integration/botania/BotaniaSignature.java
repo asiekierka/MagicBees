@@ -6,7 +6,7 @@ import vazkii.botania.api.subtile.signature.SubTileSignature;
 /**
  * Created by Elec332 on 18-5-2017.
  */
-public class BotaniaSignature extends SubTileSignature {
+public class BotaniaSignature implements SubTileSignature {
 
 	public BotaniaSignature(String subtileName) {
 		this.name = subtileName;

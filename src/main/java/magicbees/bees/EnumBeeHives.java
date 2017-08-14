@@ -165,6 +165,9 @@ public enum EnumBeeHives implements IHiveEnum {
     }
 
     protected void addDefaultDrops(int rr){
+        ItemStack comb = ItemRegister.combItem.getStackFromType(EnumCombType.MUNDANE);
+        IHiveDrop valiantDrop = new HiveDrop(addRainResist(EnumBeeSpecies.getForestrySpeciesTemplate("Valiant")), 0.05, comb);
+
         addDrop(new HiveDrop(bee, 80, comb).setIgnobleChance(0.7f));
         addDrop(new HiveDrop(addRainResist(bee), rr, comb));
         addDrop(valiantDrop);
@@ -228,9 +231,6 @@ public enum EnumBeeHives implements IHiveEnum {
         }
 
     }
-
-    private static final ItemStack comb = ItemRegister.combItem.getStackFromType(EnumCombType.MUNDANE);
-    private static final IHiveDrop valiantDrop = new HiveDrop(addRainResist(EnumBeeSpecies.getForestrySpeciesTemplate("Valiant")), 0.05, comb);
 
     private static IBeeGenome addRainResist(IAllele[] alleles){
         IAllele[] ret = alleles.clone();

@@ -36,7 +36,7 @@ import java.util.List;
 public class ItemMysteriousMagnet extends AbstractTexturedItem {
 
     public ItemMysteriousMagnet() {
-        super(new MagicBeesResourceLocation("mysteriousMagnet"));
+        super(MagicBeesResourceLocation.create("mysteriousMagnet"));
         this.setNoRepair();
         this.setHasSubtypes(true);
         this.setCreativeTab(MagicBees.creativeTab);
@@ -48,7 +48,8 @@ public class ItemMysteriousMagnet extends AbstractTexturedItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+    public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
+        super.addInformationC(stack, world, tooltip, advanced);
         String s = String.format(StatCollector.translateToLocal("misc.level"), getMagnetLevel(stack));
         if (isMagnetActive(stack)) {
             tooltip.add(String.format(StatCollector.translateToLocal("misc.magnetActive"), s));
@@ -139,8 +140,8 @@ public class ItemMysteriousMagnet extends AbstractTexturedItem {
     @Override
     protected ResourceLocation[] getTextureLocations() {
         return new ResourceLocation[]{
-                new MagicBeesResourceLocation("items/magnetinactive"),
-                new MagicBeesResourceLocation("items/magnetactive")
+                MagicBeesResourceLocation.create("items/magnetinactive"),
+                MagicBeesResourceLocation.create("items/magnetactive")
         };
     }
 

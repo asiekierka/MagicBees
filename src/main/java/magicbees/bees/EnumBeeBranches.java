@@ -313,7 +313,12 @@ public enum EnumBeeBranches implements IMagicBeesBranch {
 
     EnumBeeBranches(String scientificName){
         this.classification = BeeManager.beeFactory.createBranch(MagicBees.modid + ".branch." + name().toLowerCase(), scientificName);
-        AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(classification);
+    }
+
+    public static void registerClassifications() {
+        for (EnumBeeBranches branch : EnumBeeBranches.values()) {
+            AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch.classification);
+        }
     }
 
     private final IClassification classification;

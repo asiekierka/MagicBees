@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +36,7 @@ public class ItemManaSteelGrafter extends AbstractTexturedItem implements IToolG
 	public static final int MANA_PER_DAMAGE = 90;
 
 	public ItemManaSteelGrafter() {
-		super(new MagicBeesResourceLocation("manasteelgrafter"));
+		super(MagicBeesResourceLocation.create("manasteelgrafter"));
 		setCreativeTab(MagicBees.creativeTab);
 		setMaxDamage(15);
 		setMaxStackSize(1);
@@ -66,8 +67,8 @@ public class ItemManaSteelGrafter extends AbstractTexturedItem implements IToolG
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-		super.addInformation(stack, playerIn, tooltip, advanced);
+	public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
+		super.addInformationC(stack, world, tooltip, advanced);
 		if (!stack.isItemDamaged()) {
 			tooltip.add(Translator.translateToLocalFormatted("item.for.uses", stack.getMaxDamage() + 1));
 		}
