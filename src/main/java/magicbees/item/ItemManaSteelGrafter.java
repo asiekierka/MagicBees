@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.botania.api.mana.IManaUsingItem;
 import vazkii.botania.api.mana.ManaItemHandler;
 
@@ -67,6 +69,7 @@ public class ItemManaSteelGrafter extends AbstractTexturedItem implements IToolG
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
 		super.addInformationC(stack, world, tooltip, advanced);
 		if (!stack.isItemDamaged()) {

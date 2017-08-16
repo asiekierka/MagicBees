@@ -89,6 +89,7 @@ public class ItemMoonDial extends AbstractTexturedItem {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformationC(@Nonnull ItemStack stack, World world, List<String> tooltip, boolean advanced) {
         super.addInformationC(stack, world, tooltip, advanced);
         EntityPlayer player = MagicBees.proxy.getClientPlayer();
